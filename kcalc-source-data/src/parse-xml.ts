@@ -1,10 +1,14 @@
-import { stat } from 'fs/promises'
+import { fileExists } from '@poppanator/kcalc-lib'
 import { RawXmlFile } from './lib/constants.js'
 
 async function parseXmlFile(): Promise<void> {
-  const res = await stat(RawXmlFile)
+  const [exists] = (await fileExists(RawXmlFile)).unwrap()
 
-  console.log(`*** RES:`, res)
+  if (!exists) {
+    throw new Error(`Source XML doesn't exist. Run fetch first`)
+  }
+
+  console.log(`*** RES:`, exists)
 }
 
 void parseXmlFile()

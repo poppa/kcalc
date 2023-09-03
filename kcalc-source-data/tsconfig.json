@@ -4,6 +4,6 @@
     "tsBuildInfoFile": ".tsbuildinfo",
     "esModuleInterop": true
   },
-  "include": ["**/*.ts"],
+  "include": ["src/**/*.ts"],
   "references": [{ "path": "../kcalc-lib" }]
 }

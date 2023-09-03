@@ -3,7 +3,8 @@
   "compilerOptions": {
     "tsBuildInfoFile": ".tsbuildinfo",
     "esModuleInterop": true,
-    "outDir": "./dist"
+    "outDir": "dist"
   },
-  "include": ["./src/**/*.ts"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["dist"]
 }

@@ -2,13 +2,15 @@
   "name": "@poppanator/kcalc-lib",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/src/index.js",
+      "default": "./dist/src/index.js",
       "types": "./dist/src/index.d.ts"
     }
   },
-  "type": "module",
+  "module": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
   "files": [
     "dist",
     "!dist/**/*.test.*",
@@ -27,7 +29,5 @@
     "glob": "^10.3.4",
     "rimraf": "^5.0.1",
     "safe-result": "^1.0.2"
-  },
-  "main": "./dist/src/index.js",
-  "types": "./dist/src/index.d.ts"
+  }
 }
