@@ -7,6 +7,18 @@
     ".": {
       "default": "./dist/src/index.js",
       "types": "./dist/src/index.d.ts"
+    },
+    "./fs": {
+      "default": "./dist/src/backend/async-fs.js",
+      "types": "./dist/src/backend/async-fs.d.ts"
+    },
+    "./db": {
+      "default": "./dist/src/db/index.js",
+      "types": "./dist/src/db/index.d.ts"
+    },
+    "./backend": {
+      "default": "./dist/src/backend/index.js",
+      "types": "./dist/src/backend/index.d.ts"
     }
   },
   "module": "dist/src/index.js",
@@ -27,7 +39,10 @@
   "license": "ISC",
   "dependencies": {
     "glob": "^10.3.4",
+    "reflect-metadata": "^0.1.13",
     "rimraf": "^5.0.1",
-    "safe-result": "^1.0.2"
+    "safe-result": "^1.0.2",
+    "sqlite3": "^5.1.6",
+    "typeorm": "^0.3.17"
   }
 }

@@ -6,3 +6,8 @@
 - **Updates/Versions:** https://www.livsmedelsverket.se/livsmedel-och-innehall/naringsamne/livsmedelsdatabasen/uppdateringar.
 
   Here you'll find exact versions/updates for the `<YYYYMMDD>` parameter above.
+
+##  LanguaL™
+
+[LanguaL](https://www.langual.org/default.asp) is the International Framework
+for Food Description.
