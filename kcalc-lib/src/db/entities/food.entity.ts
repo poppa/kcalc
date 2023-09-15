@@ -1,5 +1,14 @@
-import { Column, Entity, Index, ManyToOne, PrimaryColumn } from 'typeorm'
+import {
+  Column,
+  Entity,
+  Index,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  PrimaryColumn,
+} from 'typeorm'
 import { Group } from './group.entity.js'
+import { NutritionValue } from './nutritionvalue.entity.js'
 
 export enum FoodSource {
   Auto,
@@ -11,7 +20,7 @@ export class Food {
   @PrimaryColumn()
   public id!: number
 
-  @Column()
+  @Column({ unique: true })
   @Index({ unique: true })
   public name!: string
 
@@ -23,4 +32,8 @@ export class Food {
 
   @Column({ type: 'int' })
   public source!: FoodSource
+
+  @ManyToMany(() => NutritionValue, (v) => v.id)
+  @JoinTable()
+  public nutritions!: NutritionValue[]
 }

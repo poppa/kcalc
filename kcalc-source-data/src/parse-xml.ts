@@ -1,7 +1,7 @@
 import type { PlainObject } from '@poppanator/kcalc-lib'
 import { Db } from '@poppanator/kcalc-lib'
 import { md5 } from '@poppanator/kcalc-lib/backend'
-import { fileExists, readFile, writeFile } from '@poppanator/kcalc-lib/fs'
+import { fileExists, readFile } from '@poppanator/kcalc-lib/fs'
 import { XMLParser } from 'fast-xml-parser'
 import { RawXmlFile } from './lib/constants.js'
 import type { Livsmedeldatabas } from './raw-types.js'

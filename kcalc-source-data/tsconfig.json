@@ -2,7 +2,8 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "tsBuildInfoFile": ".tsbuildinfo",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "types": ["bun-types"]
   },
   "include": ["src/**/*.ts"],
   "references": [{ "path": "../kcalc-lib" }]

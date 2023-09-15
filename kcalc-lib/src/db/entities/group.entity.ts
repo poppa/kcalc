@@ -1,4 +1,4 @@
-import { BeforeInsert, Column, Entity, PrimaryColumn } from 'typeorm'
+import { BeforeInsert, Column, Entity, Index, PrimaryColumn } from 'typeorm'
 
 @Entity()
 export class Group {
@@ -6,5 +6,6 @@ export class Group {
   public id!: string
 
   @Column({ unique: true })
+  @Index({ unique: true })
   public name!: string
 }
