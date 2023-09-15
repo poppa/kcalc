@@ -1,4 +1,4 @@
-# Livsmedelsverket (Swedish FDA) Open Data
+# Livsmedelsverket (Swedish eqivalence of FDA in the U.S.A) Open Data
 
 - **API Info:** https://www.livsmedelsverket.se/om-oss/psidata/livsmedelsdatabasen
   - _Foods and Nutritions API:_ http://www7.slv.se/apilivsmedel/LivsmedelService.svc/Livsmedel/Naringsvarde/`<YYYYMMDD>`
