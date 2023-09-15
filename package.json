@@ -10,6 +10,14 @@
     "name": "Pontus Östlund",
     "url": "https://github.com/poppa"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/poppa/kcalc"
+  },
+  "bugs": {
+    "url": "https://github.com/poppa/kcalc/issues"
+  },
+  "homepage": "https://github.com/poppa/kcalc#readme",
   "license": "MIT",
   "workspaces": [
     "kcalc-lib",
