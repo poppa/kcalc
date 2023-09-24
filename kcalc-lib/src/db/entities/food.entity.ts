@@ -5,11 +5,9 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryColumn,
-  type Relation,
 } from 'typeorm'
 import { Group } from './group.entity.js'
 import { NutritionValue } from './nutritionvalue.entity.js'
-
 
 export enum FoodSource {
   Imported,
@@ -28,12 +26,12 @@ export class Food {
   @Column()
   public weightGram!: number
 
-  @ManyToOne(() => Group)
-  public group!: Relation<Group>
+  @ManyToOne(() => Group, { cascade: true })
+  public group!: Group
 
   @Column({ type: 'int' })
   public source!: FoodSource
 
   @OneToMany(() => NutritionValue, (v) => v.food, { cascade: true })
-  public nutritions!: Array<Relation<NutritionValue>>
+  public nutritions!: Array<NutritionValue>
 }

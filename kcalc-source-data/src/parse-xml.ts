@@ -38,10 +38,7 @@ async function parseXmlFile(): Promise<void> {
 
   console.log(`Num foods:`, foods.length)
 
-  const dbgroup = db.getRepository(Db.Group)
-  const dbfood = db.getRepository(Db.Food)
   const dbnutrient = db.getRepository(Db.Nutrient)
-  const dbnutritionValue = db.getRepository(Db.NutritionValue)
   const nutrients = new Map<string, Db.Nutrient>()
 
   for (const food of foods) {
@@ -130,11 +127,6 @@ async function parseXmlFile(): Promise<void> {
       process.exit(1)
     }
   }
-
-  // const nk: PlainObject = {}
-  // Object.keys(nutrionKeys).map((k) => (nk[k] = [...nutrionKeys[k]]))
-  // await writeFile('nutrition-keys.json', JSON.stringify(nk, null, 2))
-  // await writeFile('groups.json', JSON.stringify([...groups].sort(), null, 2))
 }
 
 void parseXmlFile()
