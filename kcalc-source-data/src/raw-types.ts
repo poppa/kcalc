@@ -1,4 +1,4 @@
-export type NutrionValue = {
+export type NutritionValue = {
   // Name
   Namn: string
   // Abbreviation
@@ -36,7 +36,7 @@ export type Food = {
   Huvudgrupp: string
   // Nutrition values
   Naringsvarden: {
-    Naringsvarde: NutrionValue[]
+    Naringsvarde: NutritionValue[]
   }
 }
 

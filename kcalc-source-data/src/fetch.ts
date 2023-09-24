@@ -1,6 +1,7 @@
-import { formatBytes, type MaybeFalsy } from '@poppanator/kcalc-lib'
+import { formatBytes } from '@poppanator/kcalc-lib'
 import c from 'chalk'
 import { writeFile } from 'fs/promises'
+import got from 'got'
 import { Listr } from 'listr2'
 import { RawXmlFile, Version } from './lib/index.js'
 
@@ -10,77 +11,24 @@ type TaskCtx = {
   data?: string
 }
 
-async function* streamAsyncIterable(
-  stream: MaybeFalsy<ReadableStream>
-): AsyncGenerator<Uint8Array> {
-  if (!stream) {
-    return
-  }
-
-  const reader = stream.getReader()
-
-  try {
-    while (true) {
-      const { done, value } = await reader.read()
-
-      if (done) {
-        return
-      }
-
-      yield value
-    }
-  } finally {
-    reader.releaseLock()
-  }
-}
-
-async function download({
-  onprogress,
-}: {
-  onprogress?: (state: { total: number; downloaded: number }) => void
-} = {}): Promise<string> {
-  const query = await fetch(ApiEndpoint)
-
-  if (onprogress) {
-    const totalSize = parseInt(query.headers.get('content-length') ?? '0', 10)
-    let downloadedSize = 0
-    const u8 = new Uint8Array(totalSize)
-
-    for await (const chunk of streamAsyncIterable(query.body)) {
-      u8.set(chunk, downloadedSize)
-      downloadedSize += chunk.length
-      onprogress({ downloaded: downloadedSize, total: totalSize })
-    }
-
-    return new TextDecoder().decode(u8)
-  }
-
-  if (!query.ok) {
-    throw new Error(`Bad response from download`)
-  }
-
-  return query.text()
-}
-
 async function fetchApiData() {
   const tasks = new Listr<TaskCtx>([
     {
       title: c.gray('Init download...'),
       async task(ctx) {
-        let totalBytes = 0
-        const data = await download({
-          onprogress: ({ downloaded, total }) => {
-            totalBytes = total
-            const pcent = (downloaded / total) * 100
-            this.title = `Downloading: ${c.cyan(
-              Math.floor(pcent) + '%'
-            )} of ${c.magenta(formatBytes(total ?? 0))}`
-          },
+        const query = got(ApiEndpoint)
+
+        query.on('downloadProgress', (prog) => {
+          this.title = `Downloading: ${c.cyan(
+            Math.floor(prog.percent * 100) + '%'
+          )} of ${c.magenta(formatBytes(prog.total ?? 0))}`
         })
 
-        this.title = `Downloaded ${formatBytes(totalBytes)}`
+        const res = await query
 
-        ctx.data = data
+        this.title = `Downloaded ${formatBytes(res.body.length)}`
+
+        ctx.data = res.body
       },
     },
     {

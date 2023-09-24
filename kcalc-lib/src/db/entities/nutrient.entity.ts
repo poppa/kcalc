@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity()
 export class Nutrient {
@@ -6,8 +6,10 @@ export class Nutrient {
   public id!: number
 
   @Column({ unique: true })
-  public name!: string
+  @Index({ unique: true })
+  public abbreviation!: string
 
   @Column({ unique: true })
-  public abbreviation!: string
+  @Index({ unique: true })
+  public name!: string
 }

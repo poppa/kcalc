@@ -1,5 +1,4 @@
-import type { PlainObject } from '@poppanator/kcalc-lib'
-import { Db } from '@poppanator/kcalc-lib'
+import { Db, assertError } from '@poppanator/kcalc-lib'
 import { md5 } from '@poppanator/kcalc-lib/backend'
 import { fileExists, readFile } from '@poppanator/kcalc-lib/fs'
 import { XMLParser } from 'fast-xml-parser'
@@ -36,43 +35,100 @@ async function parseXmlFile(): Promise<void> {
 
   const foods = obj.LivsmedelDataset.LivsmedelsLista.Livsmedel
   const groups = new Set<string>()
-  const nutrionKeys: PlainObject<Set<string | number>> = {}
 
   console.log(`Num foods:`, foods.length)
 
   const dbgroup = db.getRepository(Db.Group)
   const dbfood = db.getRepository(Db.Food)
+  const dbnutrient = db.getRepository(Db.Nutrient)
+  const dbnutritionValue = db.getRepository(Db.NutritionValue)
+  const nutrients = new Map<string, Db.Nutrient>()
 
   for (const food of foods) {
     groups.add(food.Huvudgrupp)
 
-    const dbg = await dbgroup.save({
+    const dbg = {
       name: food.Huvudgrupp,
       id: generateGroupId(food.Huvudgrupp),
-    })
+    }
 
-    // @ts-expect-error
-    delete food.Naringsvarden
+    const nutritionValues: Db.NutritionValue[] = []
 
-    const dbf = await dbfood.save({
-      group: dbg,
-      id: food.Nummer,
-      name: food.Namn,
-      weightGram: food.ViktGram,
-      source: Db.FoodSource.Auto,
-    })
+    for (const nv of food.Naringsvarden.Naringsvarde) {
+      let nutrient = nutrients.get(nv.Forkortning)
 
-    console.log(`dbf:`, dbf)
+      if (!nutrient) {
+        nutrient =
+          (await dbnutrient.findOne({
+            where: { abbreviation: nv.Forkortning },
+          })) ?? undefined
 
-    // for (const nv of food.Naringsvarden.Naringsvarde) {
-    //   for (const [k, v] of Object.entries(nv)) {
-    //     if (typeof nutrionKeys[k] === 'undefined') {
-    //       nutrionKeys[k] = new Set()
-    //     }
+        if (!nutrient) {
+          try {
+            nutrient = await dbnutrient.save({
+              abbreviation: nv.Forkortning,
+              name: nv.Namn,
+            })
+          } catch (err: unknown) {
+            console.error('Error:', err)
+            console.log(`At nutrient:`, nv)
+            process.exit(1)
+          }
+        }
 
-    //     nutrionKeys[k].add(v)
-    //   }
-    // }
+        if (!nutrient) {
+          throw new Error(`Failed to resolve Nutrient for ${nv.Forkortning}`)
+        } else {
+          nutrients.set(nutrient.abbreviation, nutrient)
+        }
+      }
+
+      const dbnv = new Db.NutritionValue()
+
+      dbnv.nutrient = nutrient
+      dbnv.unit = nv.Enhet
+      dbnv.lastChanged = new Date(Date.parse(nv.SenastAndrad))
+      dbnv.value =
+        typeof nv.Varde === 'string' ? parseFloat(nv.Varde) : nv.Varde
+      dbnv.comment = nv.Kommentar?.toString()
+      dbnv.methodType = nv.Metodtyp
+      dbnv.origin = nv.Ursprung
+      dbnv.productionMethod = nv.Framtagningsmetod
+      dbnv.publication = nv.Publikation
+      dbnv.referenceType = nv.Referenstyp
+      dbnv.valueType = nv.Vardetyp
+
+      nutritionValues.push(dbnv)
+    }
+
+    try {
+      await db.manager.save(nutritionValues)
+    } catch (err: unknown) {
+      console.error('Error:', err)
+      console.log(`At nutrition value: %O`, nutritionValues[0])
+      process.exit(1)
+    }
+
+    const dbf = new Db.Food()
+
+    dbf.group = dbg
+    dbf.id = food.Nummer
+    dbf.name = food.Namn
+    dbf.weightGram = food.ViktGram
+    dbf.source = Db.FoodSource.Imported
+    dbf.nutritions = nutritionValues
+
+    try {
+      const saveRes = await db.manager.save(dbf)
+      console.log(`Food(%d): %s`, saveRes.id, saveRes.name)
+    } catch (err: unknown) {
+      assertError(err)
+      console.error('Error:', err.message)
+      // @ts-expect-error
+      delete dbf.nutritions
+      console.error('At: ', dbf)
+      process.exit(1)
+    }
   }
 
   // const nk: PlainObject = {}
