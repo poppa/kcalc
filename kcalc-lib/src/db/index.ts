@@ -10,6 +10,7 @@ import {
 import type { Maybe } from '../type-types.js'
 
 export { Food, FoodSource, Group, Nutrient, NutritionValue }
+export * from './api.js'
 
 export type InitDbOptions = {
   path: string

@@ -26,6 +26,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@poppanator/http-constants": "^1.0.3-RC.0",
 		"dotenv": "^16.3.1"
 	}
 }

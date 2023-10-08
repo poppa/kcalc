@@ -8,5 +8,3 @@ const dbOptions: Db.InitDbOptions = {
 }
 
 await Db.init(dbOptions)
-
-console.log(`SQLITE DB INITIALIZED:`, dbOptions)
